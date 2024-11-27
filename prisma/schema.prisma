@@ -1,0 +1,29 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                  Int           @id @default(autoincrement())
+  first_name          String
+  last_name           String
+  email               String        @unique
+  birthday            DateTime
+  location            String
+  timezone            String
+  failedEmails        String?
+  failedEmailsRecords FailedEmail[] @relation("UserFailedEmails")
+}
+
+model FailedEmail {
+  id       Int      @id @default(autoincrement())
+  user_id  Int
+  email    String
+  message  String
+  failedAt DateTime @default(now())
+  user     User     @relation("UserFailedEmails", fields: [user_id], references: [id])
+}

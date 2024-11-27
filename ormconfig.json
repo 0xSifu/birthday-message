@@ -1,0 +1,11 @@
+{
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5432,
+    "username": "postgres",
+    "password": "P@ssw0rd",
+    "database": "symspace",
+    "entities": ["src/entities/*.ts"],
+    "migrations": ["src/database/migrations/**/*.ts"]
+  }
+  
