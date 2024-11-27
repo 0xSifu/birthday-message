@@ -18,8 +18,33 @@ export const consumeBirthdayJobs = async (channel: Channel, queue: string) => {
                 if (user) {
                     const today = moment().tz(user.timezone).format("YYYY-MM-DD");
                     const birthday = moment(user.birthday).tz(user.timezone).format("YYYY-MM-DD");
+
                     if (today === birthday) {
-                        await sendEmail(user);
+                        const emailSent = await prisma.sentEmail.findFirst({
+                            where: {
+                                userId: user.id,
+                                email: user.email,
+                                sentAt: {
+                                    gte: new Date(new Date(user.birthday).setHours(0, 0, 0, 0)),
+                                    lt: new Date(new Date(user.birthday).setHours(23, 59, 59, 999)),
+                                },
+                            },
+                        });
+
+                        if (emailSent) {
+                            console.log(`Email already sent to ${user.email} for their birthday.`);
+                        } else {
+                            const response = await sendEmail(user);
+                            if (response) {
+                                await prisma.sentEmail.create({
+                                    data: {
+                                        userId: user.id,
+                                        email: user.email,
+                                    },
+                                });
+                                console.log(`Email sent to ${user.email}:`);
+                            }
+                        }
                     } else {
                         console.log(`Today is not ${user.first_name}'s birthday.`);
                     }
