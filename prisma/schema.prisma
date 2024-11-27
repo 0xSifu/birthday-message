@@ -12,11 +12,21 @@ model User {
   first_name          String
   last_name           String
   email               String        @unique
-  birthday            DateTime
+  birthday            DateTime      
   location            String
   timezone            String
   failedEmails        String?
   failedEmailsRecords FailedEmail[] @relation("UserFailedEmails")
+  sentEmails          SentEmail[]
+  @@index([email, birthday])
+}
+
+model SentEmail {
+    id        Int      @id @default(autoincrement())
+    userId    Int      
+    email     String   
+    sentAt    DateTime @default(now())
+    user      User     @relation(fields: [userId], references: [id])
 }
 
 model FailedEmail {

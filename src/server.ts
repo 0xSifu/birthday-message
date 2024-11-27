@@ -11,10 +11,10 @@ import { prisma } from "./config/prisma";
 
 moment.tz.load(require('moment-timezone/data/packed/latest.json'));
 
-const app = express();
+export const app = express();
 app.use(express.json());
 
-const generateUniqueId = () => {
+export const generateUniqueId = () => {
     return Math.floor(Math.random() * 1000000);
 };
 
@@ -33,11 +33,9 @@ const generateUniqueId = () => {
             const birthdayDay = birthday.date();
     
             if (todayDay === birthdayDay) {
-                console.log("Sending Birthday Email to : ", user.first_name);
-                const sendTime = moment.tz(user.timezone).set({ hour: 16, minute: 20, second: 0 });
+                const sendTime = moment.tz(user.timezone).set({ hour: 22, minute: 54, second: 0 });
                 const now = moment();
-    
-                if (sendTime.isAfter(now)) {
+                if (sendTime.isSame(now, 'minute')) {
                     setTimeout(async () => {
                         await sendEmail(user);
                     }, sendTime.diff(now));
